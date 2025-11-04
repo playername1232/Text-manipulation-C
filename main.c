@@ -12,8 +12,8 @@ struct WordChanges
     unsigned int spacesAfter;
 };
 
-#define false 0
-#define true 1
+#define false   0
+#define true    1
 
 #define ASCII_MASK 32
 
@@ -85,25 +85,51 @@ int toUpperStr(char* str, const unsigned int* length)
     return changed;
 }
 
-void normalizeFirstLetterCapital(char* str, const unsigned int* length, struct WordChanges* wordChanges)
+void removeDuplicitSpaces(char* str, const unsigned int* length, struct WordChanges* wordChanges)
+{
+    int increment = 0;
+
+    while (str[increment++] == ' ');
+
+    if (--increment <= 0)
+    {
+        increment = 1;
+    }
+
+    for (unsigned int i = 0; (i + increment) < *length; i++)
+    {
+        if (str[i] == ' ' && str[i + increment] == ' ')
+        {
+            increment++;
+            i--;
+        }
+        else
+        {
+            str[i] = str[i + increment];
+        }
+    }
+}
+
+void normalizeFirstLetterCapital(char** str, const unsigned int* length, struct WordChanges* wordChanges)
 {
     int bFirstLetter = true;
 
     for (unsigned int i = 0; i < *length; i++)
     {
-        if (str[i] == '_')
+        if (*str[i] == '_')
         {
             bFirstLetter = true;
             wordChanges->spacesBefore++;
+            wordChanges->spacesAfter++;
             continue;
         }
 
         if (bFirstLetter)
         {
-            if (asciiIsLowerCase(str[i]))
+            if (asciiIsLowerCase(*str[i]))
             {
                 wordChanges->lowerCaseBefore++;
-                str[i] = asciiToUpperCase(str[i]);
+                *str[i] = asciiToUpperCase(*str[i]);
             }
             else
             {
@@ -115,10 +141,10 @@ void normalizeFirstLetterCapital(char* str, const unsigned int* length, struct W
         }
         else
         {
-            if (asciiIsUpperCase(str[i]))
+            if (asciiIsUpperCase(*str[i]))
             {
                 wordChanges->upperCaseBefore++;
-                str[i] = asciiToLowerCase(str[i]);
+                *str[i] = asciiToLowerCase(*str[i]);
             }
             else
             {
@@ -134,5 +160,18 @@ void normalizeFirstLetterCapital(char* str, const unsigned int* length, struct W
 
 int main(void)
 {
+    char test[10] = { ' ', ' ', 'a', 'v', ' ', ' ', 'f', 'a', 'c', '\0' };
+
+    struct WordChanges changes = { 0, 0, 0, 0, 0, 0 };
+
+    const unsigned int len = 10;
+
+    removeDuplicitSpaces(&test[0], &len, &changes);
+
+    for (int i = 0; i < 10; i++)
+    {
+        printf("'%c' ", test[i]);
+    }
+
     return 0;
 }
