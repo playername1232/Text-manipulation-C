@@ -1,0 +1,28 @@
+﻿3
+
+aaaaa GAGAG HOJHOOOJO
+
+                 FFFFFFFF FF F F AAAAaa
+
+dfadasdf fsaf asf
+
+
+Aaaaa Gagag Hojhooojo
+
+lowercase: 6 -> 17
+uppercase: 24 -> 13
+spaces: 12 -> 12
+
+Ffffffff Ff F F Aaaaaa
+
+lowercase: 3 -> 14
+uppercase: 16 -> 5
+spaces: 21 -> 4
+
+Dfadasdf Fsaf Asf
+
+lowercase: 15 -> 12
+uppercase: 1 -> 4
+spaces: 3 -> 3
+
+Process finished with exit code 0
