@@ -178,7 +178,7 @@ void PrintWord(const char* str)
 
 void PrintChanges(struct WordChanges* wordChanges)
 {
-    printf("\nlowercase: %d -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
+    printf("lowercase: %d -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
     printf("uppercase: %d -> %d\n", wordChanges->upperCaseBefore, wordChanges->upperCaseAfter);
     printf("spaces: %d -> %d\n", wordChanges->spacesBefore, wordChanges->spacesAfter);
 }
@@ -205,6 +205,7 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 
     printf("\n");
     PrintWord(ptr);
+    printf("\n");
     PrintChanges(wordChanges);
 }
 
