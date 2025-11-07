@@ -13,14 +13,14 @@
 
 struct WordChanges
 {
-    unsigned int lowerCaseBefore;
-    unsigned int lowerCaseAfter;
+    int lowerCaseBefore;
+    int lowerCaseAfter;
 
-    unsigned int upperCaseBefore;
-    unsigned int upperCaseAfter;
+    int upperCaseBefore;
+    int upperCaseAfter;
 
-    unsigned int spacesBefore;
-    unsigned int spacesAfter;
+    int spacesBefore;
+    int spacesAfter;
 };
 
 // region DEBUG Helper functions
@@ -243,9 +243,9 @@ void PrintWord(const char* str)
 
 void PrintChanges(struct WordChanges* wordChanges)
 {
-    printf("lowercase: %u -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
-    printf("uppercase: %u -> %d\n", wordChanges->upperCaseBefore, wordChanges->upperCaseAfter);
-    printf("spaces: %u -> %d\n", wordChanges->spacesBefore, wordChanges->spacesAfter);
+    printf("lowercase: %d -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
+    printf("uppercase: %d -> %d\n", wordChanges->upperCaseBefore, wordChanges->upperCaseAfter);
+    printf("spaces: %d -> %d\n", wordChanges->spacesBefore, wordChanges->spacesAfter);
 }
 
 void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
