@@ -222,18 +222,6 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 
 int main(void)
 {
-    struct WordChanges test;
-    char str[] = "TEST         TEAST       TEST";
-
-    RemoveDuplicitSpaces(str, &test);
-
-    for (int i = 0; str[i] != '\0'; i++)
-    {
-        printf("'%c' ", str[i]);
-    }
-
-    return 0;
-
     char numBuffer[32];
 
     fgets(numBuffer, sizeof(numBuffer), stdin);
