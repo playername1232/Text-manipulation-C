@@ -117,21 +117,30 @@ void TrimSpacesEnd(char* str, struct WordChanges* wordChanges)
 
 void RemoveDuplicitSpaces(char* str, struct WordChanges* wordChanges)
 {
-    int increment = 1;
+    int j = 0;
+    int space = 0;
 
-    for (unsigned int i = 0; str[i + increment] != '\0'; i++)
+    for (int i = 0; str[i] != '\0'; i++)
     {
-        if (str[i] == ' ' && str[i + increment] == ' ')
+        if (str[i] == ' ')
         {
-            increment++;
-            i--;
+            if (!space)
+            {
+                str[j++] = ' ';
+                space = 1;
+            }
         }
         else
         {
-            str[i] = str[i + increment];
+            str[j++] = str[i];
+            space = 0;
+            wordChanges->spacesBefore++;
         }
     }
+
+    str[j] = '\0';
 }
+
 
 void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struct WordChanges* wordChanges)
 {
@@ -213,6 +222,18 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 
 int main(void)
 {
+    struct WordChanges test;
+    char str[] = "TEST         TEAST       TEST";
+
+    RemoveDuplicitSpaces(str, &test);
+
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        printf("'%c' ", str[i]);
+    }
+
+    return 0;
+
     char numBuffer[32];
 
     fgets(numBuffer, sizeof(numBuffer), stdin);
