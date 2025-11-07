@@ -118,7 +118,7 @@ void TrimSpacesEnd(char* str, struct WordChanges* wordChanges)
 void RemoveDuplicitSpaces(char* str, struct WordChanges* wordChanges)
 {
     int j = 0;
-    int space = 0;
+    int space = false;
 
     for (int i = 0; str[i] != '\0'; i++)
     {
@@ -127,13 +127,13 @@ void RemoveDuplicitSpaces(char* str, struct WordChanges* wordChanges)
             if (!space)
             {
                 str[j++] = ' ';
-                space = 1;
+                space = true;
             }
         }
         else
         {
             str[j++] = str[i];
-            space = 0;
+            space = false;
             wordChanges->spacesBefore++;
         }
     }
