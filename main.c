@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+// region macro definitions
+
+#define false   0
+#define true    1
+
+#define ASCII_MASK 32
+
+// endregion
+
 struct WordChanges
 {
     unsigned int lowerCaseBefore;
@@ -14,10 +23,19 @@ struct WordChanges
     unsigned int spacesAfter;
 };
 
-#define false   0
-#define true    1
+// region DEBUG Helper functions
 
-#define ASCII_MASK 32
+struct WordChanges wordChangesCtorStack()
+{
+    return (struct WordChanges){0, 0, 0, 0, 0, 0};
+}
+
+struct WordChanges* wordChangesCtorHeap()
+{
+    return calloc(1, sizeof(struct WordChanges));
+}
+
+// endregion
 
 // region ascii conversion
 
@@ -46,26 +64,16 @@ char asciiToLowerCase(char _c)
 // Returns upper case ASCII character e.g. 'a' -> 'A', 'b' -> 'B'
 char asciiToUpperCase(char _c)
 {
-    if (asciiIsLowerCase(_c))
-    {
-        return _c - ASCII_MASK;
-    }
-
-    return _c;
+    return _c - ASCII_MASK;
 }
 // endregion
 
 // region Text manipulation
-int ContainsIdenticalCharactersInRow(const char* str, const unsigned int* length)
+int ContainsIdenticalCharactersInRow(const char* str, const unsigned int* start)
 {
-    if (*length == 1)
+    for (unsigned int i = *start; str[i + 1] != '\0' && str[i + 1] != ' '; i++)
     {
-        return false;
-    }
-
-    for (unsigned int i = 0; i < *length - 1; i++)
-    {
-        if (str[i] == str[i + 1])
+        if (asciiToLowerCase(str[i]) == asciiToLowerCase(str[i + 1]))
         {
             return true;
         }
@@ -74,17 +82,53 @@ int ContainsIdenticalCharactersInRow(const char* str, const unsigned int* length
     return false;
 }
 
-int ToUpperStr(char* str, const unsigned int* length)
+void ToUpperWord(char* str, const unsigned int* start, struct WordChanges* wordChanges)
 {
-    int changed = 0;
-
-    for (unsigned int i = 0; i < *length; i++)
+    for (unsigned int i = *start; str[i] != '\0' && str[i] != ' '; i++)
     {
-        changed += asciiIsLowerCase(str[i]);
-        str[i] = asciiToUpperCase(str[i]);
-    }
+        if (asciiIsLowerCase(str[i]))
+        {
+            wordChanges->lowerCaseBefore++;
+            wordChanges->upperCaseAfter++;
 
-    return changed;
+            str[i] = asciiToUpperCase(str[i]);
+            continue;
+        }
+
+        wordChanges->upperCaseBefore++;
+        wordChanges->upperCaseAfter++;
+    }
+}
+
+void RemoveRepeatingCharacters(char* str, const unsigned int* start, struct WordChanges* wordChanges)
+{
+    unsigned int i = *start;
+    unsigned int j = i + 1;
+
+    while (str[j] != '\0' && str[j] != ' ')
+    {
+        if (str[j] == str[i])
+        {
+            for (unsigned int k = j; str[k] != '\0'; k++)
+            {
+                str[k] = str[k + 1];
+            }
+
+            if (asciiIsLowerCase(str[i]))
+            {
+                wordChanges->lowerCaseAfter--;
+            }
+            else if (asciiIsUpperCase(str[i]))
+            {
+                wordChanges->upperCaseAfter--;
+            }
+        }
+        else
+        {
+            i = j;
+            j++;
+        }
+    }
 }
 
 void TrimSpacesStart(char* str, struct WordChanges* wordChanges)
@@ -124,22 +168,26 @@ void RemoveDuplicitSpaces(char* str, struct WordChanges* wordChanges)
     {
         if (str[i] == ' ')
         {
+            wordChanges->spacesBefore++;
+
             if (!space)
             {
                 str[j++] = ' ';
                 space = true;
+                wordChanges->spacesAfter++;
             }
         }
         else
         {
             str[j++] = str[i];
+
             space = false;
-            wordChanges->spacesBefore++;
         }
     }
 
     str[j] = '\0';
 }
+
 
 
 void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struct WordChanges* wordChanges)
@@ -174,7 +222,15 @@ void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struc
 
 void PerformWordCheck(char* ptr, const unsigned int* start, struct WordChanges* wordChanges)
 {
-    NormalizeWordFirstLetterCapital(ptr, start, wordChanges);
+    if (ContainsIdenticalCharactersInRow(ptr, start))
+    {
+        ToUpperWord(ptr, start, wordChanges);
+        RemoveRepeatingCharacters(ptr, start, wordChanges);
+    }
+    else
+    {
+        NormalizeWordFirstLetterCapital(ptr, start, wordChanges);
+    }
 }
 
 void PrintWord(const char* str)
@@ -187,30 +243,30 @@ void PrintWord(const char* str)
 
 void PrintChanges(struct WordChanges* wordChanges)
 {
-    printf("lowercase: %d -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
-    printf("uppercase: %d -> %d\n", wordChanges->upperCaseBefore, wordChanges->upperCaseAfter);
-    printf("spaces: %d -> %d\n", wordChanges->spacesBefore, wordChanges->spacesAfter);
+    printf("lowercase: %u -> %d\n", wordChanges->lowerCaseBefore, wordChanges->lowerCaseAfter);
+    printf("uppercase: %u -> %d\n", wordChanges->upperCaseBefore, wordChanges->upperCaseAfter);
+    printf("spaces: %u -> %d\n", wordChanges->spacesBefore, wordChanges->spacesAfter);
 }
 
 void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 {
     TrimSpacesStart(ptr, wordChanges);
     TrimSpacesEnd(ptr, wordChanges);
+    RemoveDuplicitSpaces(ptr, wordChanges);
 
     unsigned int startIdx = 0;
 
-    for (int i = 0; ptr[i] != '\0'; i++)
+    for (int i = 0; ; i++)
     {
-        if (ptr[i] == ' ')
+        if (ptr[i] == ' ' || ptr[i] == '\0')
         {
             PerformWordCheck(ptr, &startIdx, wordChanges);
             startIdx = i + 1;
-            wordChanges->spacesBefore++;
-            wordChanges->spacesAfter++;
         }
-    }
 
-    NormalizeWordFirstLetterCapital(ptr, &startIdx, wordChanges);
+        if (ptr[i] == '\0')
+            break;
+    }
 
     printf("\n");
     PrintWord(ptr);
@@ -228,7 +284,7 @@ int main(void)
 
     unsigned int numberOfWords = (unsigned int)strtoul(numBuffer, NULL, 10);
 
-    char (*words)[50] = malloc(numberOfWords * sizeof(*words));
+    char (*words)[50] = calloc(numberOfWords, sizeof(*words));
     if (words == NULL)
     {
         return -1;
