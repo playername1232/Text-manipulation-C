@@ -223,13 +223,13 @@ void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struc
         {
             str[i] = asciiToLowerCase(str[i]);
             wordChanges->upperCaseBefore++;
+            wordChanges->lowerCaseAfter++;
         }
-        else
+        else if (asciiIsLowerCase(str[i]))
         {
             wordChanges->lowerCaseBefore++;
+            wordChanges->lowerCaseAfter++;
         }
-
-        wordChanges->lowerCaseAfter++;
     }
 }
 
