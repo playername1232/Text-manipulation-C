@@ -73,13 +73,26 @@ int ContainsIdenticalCharactersInRow(const char* str, const unsigned int* start)
 {
     for (unsigned int i = *start; str[i + 1] != '\0' && str[i + 1] != ' '; i++)
     {
-        if (asciiToLowerCase(str[i]) == asciiToLowerCase(str[i + 1]))
+        if (str[i] == str[i + 1])
         {
             return true;
         }
     }
 
     return false;
+}
+
+int ContainsOnlyLowerCase(const char* str, const unsigned int* start)
+{
+    for (unsigned int i = *start; str[i] != '\0' && str[i] != ' '; i++)
+    {
+        if (asciiIsUpperCase(str[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void ToUpperWord(char* str, const unsigned int* start, struct WordChanges* wordChanges)
@@ -150,7 +163,7 @@ void TrimSpacesStart(char* str, struct WordChanges* wordChanges)
 
 void TrimSpacesEnd(char* str, struct WordChanges* wordChanges)
 {
-    int len = strlen(str);
+    const int len = (int)strlen(str);
 
     for (int i = len - 1; i >= 0 && str[i] == ' '; i--)
     {
@@ -210,26 +223,30 @@ void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struc
         {
             str[i] = asciiToLowerCase(str[i]);
             wordChanges->upperCaseBefore++;
+            wordChanges->lowerCaseAfter++;
         }
-        else
+        else if (asciiIsLowerCase(str[i]))
         {
             wordChanges->lowerCaseBefore++;
+            wordChanges->lowerCaseAfter++;
         }
-
-        wordChanges->lowerCaseAfter++;
     }
 }
 
 void PerformWordCheck(char* ptr, const unsigned int* start, struct WordChanges* wordChanges)
 {
-    if (ContainsIdenticalCharactersInRow(ptr, start))
+    if (ContainsOnlyLowerCase(ptr, start))
     {
         ToUpperWord(ptr, start, wordChanges);
-        RemoveRepeatingCharacters(ptr, start, wordChanges);
     }
     else
     {
         NormalizeWordFirstLetterCapital(ptr, start, wordChanges);
+    }
+
+    if (ContainsIdenticalCharactersInRow(ptr, start))
+    {
+        RemoveRepeatingCharacters(ptr, start, wordChanges);
     }
 }
 
