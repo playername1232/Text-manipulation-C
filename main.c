@@ -105,11 +105,12 @@ void ToUpperWord(char* str, const unsigned int* start, struct WordChanges* wordC
             wordChanges->upperCaseAfter++;
 
             str[i] = asciiToUpperCase(str[i]);
-            continue;
         }
-
-        wordChanges->upperCaseBefore++;
-        wordChanges->upperCaseAfter++;
+        else if (asciiIsUpperCase(str[i]))
+        {
+            wordChanges->upperCaseBefore++;
+            wordChanges->upperCaseAfter++;
+        }
     }
 }
 
@@ -209,13 +210,13 @@ void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struc
     {
         str[*start] = asciiToUpperCase(str[*start]);
         wordChanges->lowerCaseBefore++;
+        wordChanges->upperCaseAfter++;
     }
-    else
+    else if (asciiIsUpperCase(str[*start]))
     {
         wordChanges->upperCaseBefore++;
+        wordChanges->upperCaseAfter++;
     }
-
-    wordChanges->upperCaseAfter++;
 
     for (unsigned int i = *start + 1; str[i] != ' ' && str[i] != '\0'; i++)
     {
