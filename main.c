@@ -274,7 +274,7 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 
     unsigned int startIdx = 0;
 
-    for (int i = 0; ; i++)
+    for (unsigned int i = 0; ; i++)
     {
         if (ptr[i] == ' ' || ptr[i] == '\0')
         {
@@ -320,7 +320,7 @@ int main(void)
         return -1;
     }
 
-    for (int i = 0; i < numberOfWords; i++)
+    for (unsigned int i = 0; i < numberOfWords; i++)
     {
         PerformStringCheck(words[i], &changes[i]);
     }
