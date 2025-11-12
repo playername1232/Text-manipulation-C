@@ -23,20 +23,6 @@ struct WordChanges
     int spacesAfter;
 };
 
-// region DEBUG Helper functions
-
-struct WordChanges wordChangesCtorStack()
-{
-    return (struct WordChanges){0, 0, 0, 0, 0, 0};
-}
-
-struct WordChanges* wordChangesCtorHeap()
-{
-    return calloc(1, sizeof(struct WordChanges));
-}
-
-// endregion
-
 // region ascii conversion
 
 // Returns 0 -> Character isn't lower case ('a' - 'z')
