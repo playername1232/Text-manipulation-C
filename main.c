@@ -1,4 +1,5 @@
-﻿#include <stdio.h>
+﻿#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -22,6 +23,22 @@ struct WordChanges
     int spacesBefore;
     int spacesAfter;
 };
+
+
+
+// region DEBUG Helper functions
+
+struct WordChanges wordChangesCtorStack()
+{
+    return (struct WordChanges){0, 0, 0, 0, 0, 0};
+}
+
+struct WordChanges* wordChangesCtorHeap()
+{
+    return calloc(1, sizeof(struct WordChanges));
+}
+
+// endregion
 
 // region ascii conversion
 
@@ -150,13 +167,20 @@ void TrimSpacesStart(char* str, struct WordChanges* wordChanges)
 
 void TrimSpacesEnd(char* str, struct WordChanges* wordChanges)
 {
-    const int len = (int)strlen(str);
+    int idx = (int)strlen(str) - 1;
 
-    for (int i = len - 1; i >= 0 && str[i] == ' '; i--)
+    // testing + kelvin results have failed due to whitespace characters (0xA, 0x10, 0x32, new line, tab etc.)
+    while (idx >= 0 && isspace((unsigned char)str[idx]))
     {
-        str[i] = str[i + 1];
-        wordChanges->spacesBefore++;
+        if (str[idx] == ' ')
+        {
+            wordChanges->spacesBefore++;
+        }
+
+        idx--;
     }
+
+    str[++idx] = '\0';
 }
 
 void RemoveDuplicitSpaces(char* str, struct WordChanges* wordChanges)
