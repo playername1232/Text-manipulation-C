@@ -10,6 +10,9 @@
 
 #define ASCII_MASK 32
 
+#define MAX_CHARS 50
+#define STR_BUFFER_SIZE (MAX_CHARS + 2)
+
 // endregion
 
 struct WordChanges
@@ -304,13 +307,13 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
 
 int main(void)
 {
-    char numBuffer[32];
+    char numBuffer[sizeof(unsigned int) * 8];
 
     fgets(numBuffer, sizeof(numBuffer), stdin);
 
     unsigned int numberOfWords = (unsigned int)strtoul(numBuffer, NULL, 10);
 
-    char (*words)[50] = calloc(numberOfWords, sizeof(*words));
+    char (*words)[STR_BUFFER_SIZE] = calloc(numberOfWords, sizeof(*words));
     if (words == NULL)
     {
         fprintf(stderr, "Failed to allocate memory for words");
@@ -319,7 +322,18 @@ int main(void)
 
     for (unsigned int i = 0; i < numberOfWords; i++)
     {
-        fgets(words[i], sizeof(words[i]), stdin);
+        if (!fgets(words[i], STR_BUFFER_SIZE, stdin))
+        {
+            fprintf(stderr, "Unexpected EOF on line %u\n", i);
+            free(words);
+            return EXIT_FAILURE;
+        }
+
+        const size_t len = strlen(words[i]);
+        if (len > 0 && words[i][len - 1] == '\n')
+        {
+            words[i][len - 1] = '\0';
+        }
     }
 
     struct WordChanges* changes = calloc(numberOfWords, sizeof(struct WordChanges));
