@@ -24,8 +24,6 @@ struct WordChanges
     int spacesAfter;
 };
 
-
-
 // region DEBUG Helper functions
 
 struct WordChanges wordChangesCtorStack()
