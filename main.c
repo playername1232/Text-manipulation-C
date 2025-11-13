@@ -313,7 +313,8 @@ int main(void)
     char (*words)[50] = calloc(numberOfWords, sizeof(*words));
     if (words == NULL)
     {
-        return -1;
+        fprintf(stderr, "Failed to allocate memory for words");
+        return EXIT_FAILURE;
     }
 
     for (unsigned int i = 0; i < numberOfWords; i++)
@@ -325,7 +326,8 @@ int main(void)
     if (changes == NULL)
     {
         free(words);
-        return -1;
+        fprintf(stderr, "Failed to allocate memory for changes");
+        return EXIT_FAILURE;
     }
 
     for (unsigned int i = 0; i < numberOfWords; i++)
