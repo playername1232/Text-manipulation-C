@@ -304,10 +304,10 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
             break;
     }
 
-    printf("\n");
     PrintWord(ptr);
     printf("\n");
     PrintChanges(wordChanges);
+    printf("\n");
 }
 
 // endregion
