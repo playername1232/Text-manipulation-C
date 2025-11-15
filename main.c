@@ -118,10 +118,11 @@ void ToUpperWord(char* str, const unsigned int* start, struct WordChanges* wordC
     }
 }
 
-void RemoveRepeatingCharacters(char* str, const unsigned int* start, struct WordChanges* wordChanges)
+unsigned int RemoveRepeatingCharacters(char* str, const unsigned int* start, struct WordChanges* wordChanges)
 {
     unsigned int i = *start;
     unsigned int j = i + 1;
+    unsigned int removedCounter =0;
 
     while (str[j] != '\0' && str[j] != ' ')
     {
@@ -140,6 +141,8 @@ void RemoveRepeatingCharacters(char* str, const unsigned int* start, struct Word
             {
                 wordChanges->upperCaseAfter--;
             }
+
+            removedCounter++;
         }
         else
         {
@@ -147,6 +150,8 @@ void RemoveRepeatingCharacters(char* str, const unsigned int* start, struct Word
             j++;
         }
     }
+
+    return removedCounter;
 }
 
 void TrimSpacesStart(char* str, struct WordChanges* wordChanges)
@@ -245,7 +250,7 @@ void NormalizeWordFirstLetterCapital(char* str, const unsigned int* start, struc
     }
 }
 
-void PerformWordCheck(char* ptr, const unsigned int* start, struct WordChanges* wordChanges)
+unsigned int PerformWordCheck(char* ptr, const unsigned int* start, struct WordChanges* wordChanges)
 {
     if (ContainsOnlyLowerCase(ptr, start))
     {
@@ -258,8 +263,10 @@ void PerformWordCheck(char* ptr, const unsigned int* start, struct WordChanges* 
 
     if (ContainsIdenticalCharactersInRow(ptr, start))
     {
-        RemoveRepeatingCharacters(ptr, start, wordChanges);
+        return RemoveRepeatingCharacters(ptr, start, wordChanges);
     }
+
+    return 0;
 }
 
 void PrintWord(const char* str)
@@ -289,8 +296,8 @@ void PerformStringCheck(char* ptr, struct WordChanges* wordChanges)
     {
         if (ptr[i] == ' ' || ptr[i] == '\0')
         {
-            PerformWordCheck(ptr, &startIdx, wordChanges);
-            startIdx = i + 1;
+            const unsigned int decrement = PerformWordCheck(ptr, &startIdx, wordChanges);
+            startIdx = i + 1 - decrement;
         }
 
         if (ptr[i] == '\0')
