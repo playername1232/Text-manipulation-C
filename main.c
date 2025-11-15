@@ -122,7 +122,7 @@ unsigned int RemoveRepeatingCharacters(char* str, const unsigned int* start, str
 {
     unsigned int i = *start;
     unsigned int j = i + 1;
-    unsigned int removedCounter =0;
+    unsigned int removedCounter = 0;
 
     while (str[j] != '\0' && str[j] != ' ')
     {
